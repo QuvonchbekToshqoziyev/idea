@@ -2,10 +2,10 @@ module.exports = {
   apps: [
     {
       name: 'intentloop-api',
-      cwd: '/var/www/intentloop/server',
-      script: 'npm',
-      args: 'run start:prod',
-      env_production: {
+      cwd: '/var/www/idea/new/server',
+      script: 'node',
+      args: 'dist/main.js',
+      env: {
         NODE_ENV: 'production'
       }
     }
