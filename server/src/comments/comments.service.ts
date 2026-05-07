@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { AiService } from '../ai/ai.service';
@@ -23,14 +27,24 @@ export class CommentsService {
       const friendship = await this.prisma.friendship.findFirst({
         where: {
           OR: [
-            { requesterId: userId, addresseeId: plan.userId, status: FriendshipStatus.ACCEPTED },
-            { requesterId: plan.userId, addresseeId: userId, status: FriendshipStatus.ACCEPTED },
+            {
+              requesterId: userId,
+              addresseeId: plan.userId,
+              status: FriendshipStatus.ACCEPTED,
+            },
+            {
+              requesterId: plan.userId,
+              addresseeId: userId,
+              status: FriendshipStatus.ACCEPTED,
+            },
           ],
         },
       });
 
       if (!friendship) {
-        throw new ForbiddenException('You must be a friend to comment on this plan');
+        throw new ForbiddenException(
+          'You must be a friend to comment on this plan',
+        );
       }
     }
 

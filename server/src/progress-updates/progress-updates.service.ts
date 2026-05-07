@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProgressUpdateDto } from './dto/create-progress-update.dto';
 import { AiService } from '../ai/ai.service';
@@ -84,7 +88,8 @@ export class ProgressUpdatesService {
     });
 
     if (!update) throw new NotFoundException('Update not found');
-    if (update.userId !== userId) throw new ForbiddenException('Not your update');
+    if (update.userId !== userId)
+      throw new ForbiddenException('Not your update');
 
     // Soft delete: set visibility to PRIVATE_TO_AUTHOR
     return this.prisma.progressUpdate.update({

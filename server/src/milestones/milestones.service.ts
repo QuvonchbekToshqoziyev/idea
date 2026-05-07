@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -15,14 +19,19 @@ export class MilestonesService {
     });
   }
 
-  async update(userId: string, id: string, data: { title?: string; completed?: boolean }) {
+  async update(
+    userId: string,
+    id: string,
+    data: { title?: string; completed?: boolean },
+  ) {
     const milestone = await this.prisma.milestone.findUnique({
       where: { id },
       include: { plan: true },
     });
 
     if (!milestone) throw new NotFoundException('Milestone not found');
-    if (milestone.plan.userId !== userId) throw new ForbiddenException('Not your plan');
+    if (milestone.plan.userId !== userId)
+      throw new ForbiddenException('Not your plan');
 
     const updateData: any = { ...data };
     if (data.completed === true && !milestone.completed) {
@@ -44,7 +53,8 @@ export class MilestonesService {
     });
 
     if (!milestone) throw new NotFoundException('Milestone not found');
-    if (milestone.plan.userId !== userId) throw new ForbiddenException('Not your plan');
+    if (milestone.plan.userId !== userId)
+      throw new ForbiddenException('Not your plan');
 
     return this.prisma.milestone.delete({ where: { id } });
   }

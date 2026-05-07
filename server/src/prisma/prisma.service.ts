@@ -1,46 +1,56 @@
-import { Injectable, OnModuleInit, INestApplication, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  INestApplication,
+  Logger,
+} from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 
 // In-memory fallback model
 class InMemoryModel {
   private data: any[] = [];
-  
+
   async findFirst(where: any) {
-    return this.data.find(item => 
-      Object.entries(where).every(([key, value]) => item[key] === value)
-    ) || null;
+    return (
+      this.data.find((item) =>
+        Object.entries(where).every(([key, value]) => item[key] === value),
+      ) || null
+    );
   }
-  
+
   async findUnique(where: any) {
-    return this.data.find(item => 
-      Object.entries(where).every(([key, value]) => item[key] === value)
-    ) || null;
+    return (
+      this.data.find((item) =>
+        Object.entries(where).every(([key, value]) => item[key] === value),
+      ) || null
+    );
   }
-  
+
   async create(data: any) {
     const item = { id: Math.random().toString(36).substr(2, 9), ...data };
     this.data.push(item);
     return item;
   }
-  
+
   async findMany(where?: any) {
     if (!where) return this.data;
-    return this.data.filter(item =>
-      Object.entries(where).every(([key, value]) => item[key] === value)
+    return this.data.filter((item) =>
+      Object.entries(where).every(([key, value]) => item[key] === value),
     );
   }
-  
+
   async update(where: any, data: any) {
-    const index = this.data.findIndex(item =>
-      Object.entries(where).every(([key, value]) => item[key] === value)
+    const index = this.data.findIndex((item) =>
+      Object.entries(where).every(([key, value]) => item[key] === value),
     );
     if (index === -1) return null;
     this.data[index] = { ...this.data[index], ...data };
     return this.data[index];
   }
-  
+
   async delete(where: any) {
-    const index = this.data.findIndex(item =>
-      Object.entries(where).every(([key, value]) => item[key] === value)
+    const index = this.data.findIndex((item) =>
+      Object.entries(where).every(([key, value]) => item[key] === value),
     );
     if (index === -1) return null;
     return this.data.splice(index, 1)[0];
@@ -52,7 +62,7 @@ export class PrismaService implements OnModuleInit {
   private logger = new Logger('PrismaService');
   private prismaClient: any = null;
   private usingFallback = false;
-  
+
   user: any;
   category: any;
   plan: any;
@@ -86,7 +96,6 @@ export class PrismaService implements OnModuleInit {
 
   private initializeModels() {
     try {
-      const { PrismaClient } = require('@prisma/client');
       this.prismaClient = new PrismaClient();
       this.user = this.prismaClient.user;
       this.category = this.prismaClient.category;
@@ -99,8 +108,10 @@ export class PrismaService implements OnModuleInit {
       this.inspirationItem = this.prismaClient.inspirationItem;
       this.sessionInspiration = this.prismaClient.sessionInspiration;
       this.milestone = this.prismaClient.milestone;
-    } catch (error) {
-      this.logger.warn('Failed to initialize Prisma client, using in-memory fallback');
+    } catch {
+      this.logger.warn(
+        'Failed to initialize Prisma client, using in-memory fallback',
+      );
       this.useFallbackModels();
     }
   }
@@ -113,7 +124,7 @@ export class PrismaService implements OnModuleInit {
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         this.logger.warn(
-          `Database connection failed: ${message}. Using in-memory fallback.`
+          `Database connection failed: ${message}. Using in-memory fallback.`,
         );
         this.useFallbackModels();
       }

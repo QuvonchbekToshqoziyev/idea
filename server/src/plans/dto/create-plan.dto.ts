@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsDateString, IsArray } from 'class-validator';
+import { IsString, IsOptional, IsArray } from 'class-validator';
 
 export class CreatePlanDto {
   @IsString()
@@ -19,4 +19,3 @@ export class CreatePlanDto {
   @IsArray()
   inspiration_ids?: string[];
 }
-

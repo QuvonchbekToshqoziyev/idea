@@ -37,7 +37,7 @@ describe('DashboardService', () => {
 
   it('should return dashboard data', async () => {
     const userId = 'user-123';
-    
+
     // Mocking prisma responses
     (prisma.plan.findMany as jest.Mock).mockResolvedValue([]);
     (prisma.friendship.findMany as jest.Mock).mockResolvedValue([]);

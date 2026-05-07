@@ -15,7 +15,8 @@ export class AuthService {
     const exists = await this.prisma.user.findFirst({
       where: { OR: [{ email: dto.email }, { username: dto.username }] },
     });
-    if (exists) throw new BadRequestException('email or username already taken');
+    if (exists)
+      throw new BadRequestException('email or username already taken');
     const hash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({
       data: {

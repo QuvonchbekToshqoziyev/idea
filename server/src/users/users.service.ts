@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { FriendshipStatus } from '@prisma/client';
 
@@ -94,7 +99,10 @@ export class UsersService {
     });
 
     if (!friendship) throw new NotFoundException('Friendship not found');
-    if (friendship.requesterId !== userId && friendship.addresseeId !== userId) {
+    if (
+      friendship.requesterId !== userId &&
+      friendship.addresseeId !== userId
+    ) {
       throw new ForbiddenException('Not your friendship');
     }
 

@@ -1,4 +1,15 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Patch,
+  Delete,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -20,7 +31,10 @@ export class PlansController {
     @Query('status') status?: PlanStatus,
     @Query('category') category?: string,
   ) {
-    return this.svc.findAllForUser(req.user.id, req.user.id, { status, category });
+    return this.svc.findAllForUser(req.user.id, req.user.id, {
+      status,
+      category,
+    });
   }
 
   @Get(':id')

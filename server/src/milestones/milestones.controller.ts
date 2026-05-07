@@ -1,4 +1,13 @@
-import { Controller, Post, Patch, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { MilestonesService } from './milestones.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -8,7 +17,11 @@ export class MilestonesController {
   constructor(private svc: MilestonesService) {}
 
   @Post()
-  async create(@Param('planId') planId: string, @Body('title') title: string, @Request() req: any) {
+  async create(
+    @Param('planId') planId: string,
+    @Body('title') title: string,
+    @Request() req: any,
+  ) {
     return this.svc.create(req.user.id, planId, title);
   }
 

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -13,7 +23,10 @@ export class UsersController {
   }
 
   @Post('friends/request')
-  async requestFriend(@Body('addressee_id') addresseeId: string, @Request() req: any) {
+  async requestFriend(
+    @Body('addressee_id') addresseeId: string,
+    @Request() req: any,
+  ) {
     return this.svc.sendFriendRequest(req.user.id, addresseeId);
   }
 

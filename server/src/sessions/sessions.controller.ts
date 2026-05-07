@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';

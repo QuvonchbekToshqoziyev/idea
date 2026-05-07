@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { PlanStatus, FriendshipStatus, VisibilityLevel } from '@prisma/client';
@@ -31,7 +35,11 @@ export class PlansService {
     return plan;
   }
 
-  async findAllForUser(userId: string, currentUserId: string, filters: { status?: PlanStatus; category?: string } = {}) {
+  async findAllForUser(
+    userId: string,
+    currentUserId: string,
+    filters: { status?: PlanStatus; category?: string } = {},
+  ) {
     const where: any = { userId };
 
     if (filters.status) where.status = filters.status;
@@ -42,13 +50,15 @@ export class PlansService {
     // If not owner, only see public plans (in this app, plan visibility is tied to progress updates)
     // Actually, spec says: "Get all public plans of a user. Returns private plans only if caller is the owner."
     // But our Plan model doesn't have visibility. Spec says "if any progress update is public".
-    
+
     const plans = await this.prisma.plan.findMany({
       where,
       include: {
         category: true,
         _count: {
-          select: { progressUpdates: { where: { visibility: VisibilityLevel.PUBLIC } } },
+          select: {
+            progressUpdates: { where: { visibility: VisibilityLevel.PUBLIC } },
+          },
         },
       },
     });
@@ -60,8 +70,16 @@ export class PlansService {
     const friendship = await this.prisma.friendship.findFirst({
       where: {
         OR: [
-          { requesterId: currentUserId, addresseeId: userId, status: FriendshipStatus.ACCEPTED },
-          { requesterId: userId, addresseeId: currentUserId, status: FriendshipStatus.ACCEPTED },
+          {
+            requesterId: currentUserId,
+            addresseeId: userId,
+            status: FriendshipStatus.ACCEPTED,
+          },
+          {
+            requesterId: userId,
+            addresseeId: currentUserId,
+            status: FriendshipStatus.ACCEPTED,
+          },
         ],
       },
     });
@@ -96,19 +114,31 @@ export class PlansService {
     const friendship = await this.prisma.friendship.findFirst({
       where: {
         OR: [
-          { requesterId: currentUserId, addresseeId: plan.userId, status: FriendshipStatus.ACCEPTED },
-          { requesterId: plan.userId, addresseeId: currentUserId, status: FriendshipStatus.ACCEPTED },
+          {
+            requesterId: currentUserId,
+            addresseeId: plan.userId,
+            status: FriendshipStatus.ACCEPTED,
+          },
+          {
+            requesterId: plan.userId,
+            addresseeId: currentUserId,
+            status: FriendshipStatus.ACCEPTED,
+          },
         ],
       },
     });
 
-    const hasPublicUpdates = plan.progressUpdates.some((u: any) => u.visibility === VisibilityLevel.PUBLIC);
+    const hasPublicUpdates = plan.progressUpdates.some(
+      (u: any) => u.visibility === VisibilityLevel.PUBLIC,
+    );
 
     if (friendship && hasPublicUpdates) {
       // Friends see only public ones
       return {
         ...plan,
-        progressUpdates: plan.progressUpdates.filter((u: any) => u.visibility === VisibilityLevel.PUBLIC),
+        progressUpdates: plan.progressUpdates.filter(
+          (u: any) => u.visibility === VisibilityLevel.PUBLIC,
+        ),
       };
     }
 
