@@ -1,0 +1,16 @@
+#!/bin/sh
+GIT_WORK_TREE=/var/www/intentloop
+GIT_DIR=/var/git/intentloop.git
+mkdir -p "$GIT_WORK_TREE"
+# Checkout files to work tree
+/usr/bin/git --work-tree="$GIT_WORK_TREE" --git-dir="$GIT_DIR" checkout -f
+cd "$GIT_WORK_TREE" || exit 1
+# Install and build server
+if [ -f server/package.json ]; then
+  npm ci --production --prefix server || true
+  npm run build --prefix server || true
+fi
+# Reload pm2
+if [ -f /var/www/intentloop/ecosystem.config.js ]; then
+  pm2 startOrReload /var/www/intentloop/ecosystem.config.js --env production || true
+fi
