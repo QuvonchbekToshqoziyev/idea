@@ -7,13 +7,13 @@ export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
   async getDashboard(userId: string) {
-    const plans: any[] = await this.prisma.plan.findMany({
-      where: { userId },
-    });
+    const [active_plans, stalled_plans, completed_plans] = await Promise.all([
+      this.prisma.plan.findMany({ where: { userId, status: PlanStatus.ACTIVE }, include: { category: true } }),
+      this.prisma.plan.findMany({ where: { userId, status: PlanStatus.STALLED }, include: { category: true } }),
+      this.prisma.plan.findMany({ where: { userId, status: PlanStatus.COMPLETED }, include: { category: true } }),
+    ]);
 
-    const active_plans = plans.filter((p: any) => p.status === PlanStatus.ACTIVE);
-    const stalled_plans = plans.filter((p: any) => p.status === PlanStatus.STALLED);
-    const completed_plans = plans.filter((p: any) => p.status === PlanStatus.COMPLETED);
+    const total_plans = active_plans.length + stalled_plans.length + completed_plans.length;
 
     // Get friend updates
     const friendships = await this.prisma.friendship.findMany({
@@ -57,7 +57,7 @@ export class DashboardService {
       completed_plans,
       recent_friend_updates,
       metrics: {
-        total_plans: plans.length,
+        total_plans,
         completed: completed_plans.length,
         active: active_plans.length,
         stalled: stalled_plans.length,
