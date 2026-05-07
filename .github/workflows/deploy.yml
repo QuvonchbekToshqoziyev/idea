@@ -1,16 +1,11 @@
 name: Deploy
-
 on:
   push:
-    branches: [ main ]
-
+    branches: [ master ]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Deploy to server via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -20,14 +15,9 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            mkdir -p /var/www/intentloop
-            cd /var/www/intentloop
-            if [ -d .git ]; then
-              git fetch --all --prune
-              git reset --hard origin/main
-            else
-              git clone --depth 1 "${{ secrets.REPO_URL }}" .
-            fi
-            npm ci --production --prefix server
-            npm run build --prefix server
-            pm2 startOrReload /var/www/intentloop/ecosystem.config.js --env production
+            cd /var/www/idea/new
+            git fetch --all --prune
+            git reset --hard origin/master
+            cd server && npm ci && npm run build
+            cd ../client && npm ci && npm run build
+            sudo systemctl restart intentloop-api
